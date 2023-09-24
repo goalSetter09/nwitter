@@ -32,6 +32,7 @@ export const Input = styled.input`
     &:hover {
       opacity: 0.8;
     }
+    background-color: #1d9bf0;
   }
 `;
 export const Error = styled.span`
