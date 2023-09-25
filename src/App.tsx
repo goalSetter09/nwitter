@@ -5,13 +5,12 @@ import Profile from "./routes/profile"
 import Login from "./routes/login";
 import LoadingScreen from "./components/loading-screen";
 import CreateAccount from "./routes/create-account";
-import { Children, useState } from "react";
+import { useEffect, useState } from "react";
 import { createGlobalStyle, styled } from "styled-components";
 import reset from "styled-reset";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { auth } from "./routes/firebase";
-import ProtectedRoute from "./routes/protected-route";
-// import ProtectedRoute from "./routes/protected-route";
+import ProtectedRoute from "./components/protected-route";
 
 const GlobalStyles = createGlobalStyle`
   ${reset};
@@ -21,7 +20,8 @@ const GlobalStyles = createGlobalStyle`
   body {
     background-color: black;
     color:white;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Heebo', sans-serif;
+    font-family: 'Noto Sans KR', sans-serif;  
   }
 `;
 
@@ -42,6 +42,7 @@ const router = createBrowserRouter([
         path: "profile",
         element: <Profile />,
       },
+
     ]
   },
   {
@@ -66,6 +67,9 @@ function App() {
     await auth.authStateReady();
     setLoading(false);
   };
+  useEffect(() => {
+    init();
+  }, []);
   return (
     <Wrapper>
       <GlobalStyles />

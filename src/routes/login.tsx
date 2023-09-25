@@ -48,7 +48,7 @@ export default function CreateAccount() {
   }
   return (
     <Wrapper>
-      <Title>Log in to 𝕏</Title>
+      <Title>쏭즈캠퍼스</Title>
       <Form onSubmit={onSubmit}>
         <Input onChange={onChange} name="email" value={email} placeholder="Email" type="email" required />
         <Input onChange={onChange} name="password" value={password} placeholder="Password" type="password" required />
