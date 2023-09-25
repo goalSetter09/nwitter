@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { auth } from "./firebase";
+import { auth } from "../firebase";
 import { FirebaseError } from "firebase/app";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { browserSessionPersistence, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
 import { Error, Form, Input, Switcher, Title, Wrapper } from "../components/auth-components";
 import GitHubButton from "../components/github-button";
 
@@ -35,7 +35,7 @@ export default function CreateAccount() {
     }
     try {
       setLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
+      const user = await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
     } catch (e) {
       if (e instanceof FirebaseError) {

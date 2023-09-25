@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { auth } from "./firebase";
+import { auth } from "../firebase";
 import { FirebaseError } from "firebase/app";
 import { Error, Form, Input, Switcher, Title, Wrapper } from "../components/auth-components";
 import GitHubButton from "../components/github-button";

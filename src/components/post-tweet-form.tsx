@@ -1,14 +1,16 @@
+import { addDoc, collection, updateDoc } from "firebase/firestore";
+import { useState } from "react";
 import styled from "styled-components";
+import { auth, db, storage } from "../firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-export default function PostTweetForm() {
-
-  const Form = styled.form`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 10px;
   `;
 
-  const TextArea = styled.textarea`
+const TextArea = styled.textarea`
   border: 2px solid white;
   padding: 20px;
   border-radius: 20px;
@@ -28,7 +30,7 @@ export default function PostTweetForm() {
   }
   `;
 
-  const AttachFileButton = styled.label`
+const AttachFileButton = styled.label`
   padding: 10px 0px;
   color: #1d9bf0;
   text-align: center;
@@ -39,11 +41,11 @@ export default function PostTweetForm() {
   cursor: pointer;
   `;
 
-  const AttachFileInput = styled.input`
+const AttachFileInput = styled.input`
   display: none;
   `;
 
-  const SubmitBtn = styled.input`
+const SubmitBtn = styled.input`
   background-color: #1d9bf0;
   color: white;
   border: none;
@@ -56,10 +58,65 @@ export default function PostTweetForm() {
     opacity: 0.9;
   }
   `;
-  return <Form>
-    <TextArea placeholder="What is happening?" />
-    <AttachFileButton htmlFor="file">Add Photo</AttachFileButton>
-    <AttachFileInput type="file" id="file" accept="image/*" />
+
+export default function PostTweetForm() {
+  const [isLoading, setLoading] = useState(false);
+  const [tweet, setTweet] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTweet(e.target.value);
+  };
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+    if (files && files.length === 1) {
+      setFile(files[0]);
+    }
+  }
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    console.log(user);
+    if (!user || isLoading || tweet === "" || tweet.length > 180) return;
+    try {
+      setLoading(true);
+      const doc = await addDoc(collection(db, "tweets"), {
+        tweet,
+        createdAt: Date.now(),
+        username: user.displayName || "Anonymous",
+        userId: user.uid,
+      });
+      if (file) {
+        const loacationRef = ref(
+          storage,
+          `tweets/${user.uid}-${user.displayName}/${doc.id}`
+        );
+        const result = await uploadBytes(loacationRef, file);
+        const url = getDownloadURL(result.ref);
+        await updateDoc(doc, {
+          photo: url,
+        })
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+  return <Form onSubmit={onSubmit}>
+    <TextArea
+      rows={5}
+      maxLength={180}
+      placeholder="What is happening?"
+      onChange={onChange}
+      value={tweet}
+    />
+    <AttachFileButton htmlFor="file">{file ? "Photo Added" : "Add Photo"}</AttachFileButton>
+    <AttachFileInput
+      onChange={onFileChange}
+      type="file"
+      id="file"
+      accept="image/*" />
     <SubmitBtn type="submit" value="Post Tweet" />
   </Form>
 }

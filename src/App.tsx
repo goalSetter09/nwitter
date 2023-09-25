@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 import { createGlobalStyle, styled } from "styled-components";
 import reset from "styled-reset";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { auth } from "./routes/firebase";
 import ProtectedRoute from "./components/protected-route";
+import { auth } from "./firebase";
 
 const GlobalStyles = createGlobalStyle`
   ${reset};
@@ -24,6 +24,35 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'Noto Sans KR', sans-serif;  
   }
 `;
+
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: (
+//       <ProtectedRoute>
+//         <Layout />
+//       </ProtectedRoute>
+//     ),
+//     children: [
+//       {
+//         path: "",
+//         element: <Home />,
+//       },
+//       {
+//         path: "profile",
+//         element: <Profile />,
+//       },
+//     ],
+//   },
+//   {
+//     path: "/login",
+//     element: <Login />
+//   },
+//   {
+//     path: "/create-account",
+//     element: <CreateAccount />,
+//   }
+// ]);
 
 const router = createBrowserRouter([
   {
@@ -42,18 +71,18 @@ const router = createBrowserRouter([
         path: "profile",
         element: <Profile />,
       },
-
-    ]
+    ],
   },
   {
     path: "/login",
-    element: <Login />
+    element: <Login />,
   },
   {
     path: "/create-account",
     element: <CreateAccount />,
-  }
-])
+  },
+]);
+
 
 const Wrapper = styled.div`
   height: 100vh;
